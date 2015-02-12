@@ -1,0 +1,30 @@
+<html>
+<head>
+<title>BBnT's Fueled Up Webjam</title>
+<script src="/js/d3/d3.js" charset="utf-8"></script>
+</head>
+<body>
+	<div id="div1">
+		<p>Visualize your Spending</p>
+	</div>
+	<div>
+		<p>Visualize these colors whaaaaaat</p>
+	</div>
+
+	<!------------------------ D3 Scripts ------------------ -->
+	<script>
+		d3.selectAll("p").style("color", function() {
+  			return "hsl(" + Math.random() * 360 + ",100%,50%)";
+		});
+
+		d3.selectAll("p")
+    			.data([12, 8, 15, 16, 23, 42])
+    			.style("font-size", function(d) { return d + "px"; });
+
+    	d3.select("body").selectAll("p")
+    			.data([4, 8, 15, 16, 23, 42])
+  				.enter().append("p")
+    			.text(function(d) { return "I’m number " + d + "!"; });
+	</script>
+</body>
+</html>
