@@ -1,10 +1,11 @@
+<html>
+<head>
+</head>
+<body>
 <h1><%= title %></h1>
-<ul>
-<% for(var i=0; i<users.length; i++) { %>
-<li>
-<a href='user/<%= users[i].id %>'>
-<%= users[i].firstName %> <%= users[i].lastName %>
-</a>
-</li>
-<% } %>
-</ul>
+<form>
+Username:<input type="text"><br/>
+Password:<input type="password"><br/>
+</form>
+</body>
+</html>

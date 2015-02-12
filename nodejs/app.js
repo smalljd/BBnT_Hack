@@ -37,7 +37,7 @@ app.use(express.static(__dirname + '/public'));
 
 
 app.get('/', function(req, res){
-        res.render('index.ejs');
+        res.render('index.ejs',{title:"BB and T"});
         });
 
 
@@ -50,7 +50,7 @@ app.get('/users', function(req, res){
                 if (!error && response.statusCode === 200) {
                 
                     console.log(users) // Print the json response
-                res.render('index.ejs',{title:"BB and T",users:users});
+                res.render('users.ejs',{title:"BB and T",users:users});
 
                 }
                 else
@@ -60,11 +60,23 @@ app.get('/users', function(req, res){
         });
 
 app.get('/user/:id', function(req, res, next){
-        res.locals.posts.forEach(function(post){
-                                 if (req.params.slug === post.slug){
-                                 res.render('post.ejs', { post: post });
-                                 }
-                                 })
+        var accountsURL = "http://fuelhackathon.herokuapp.com/accounts/" + req.parms.id;
+        console.log("accountsURL = " + accountsURL);
+        request({
+                url: accountsURL,
+                json: true
+                },
+                function (error, response, accounts) {
+                if (!error && response.statusCode === 200) {
+                
+                console.log(accounts) // Print the json response
+                res.render('user.ejs',{title:"Accounts",accounts:accounts});
+                
+                }
+                else
+                res.render('error.ejs');
+                
+                })
         });
 
 app.listen(3000);
