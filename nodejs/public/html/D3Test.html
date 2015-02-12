@@ -2,6 +2,15 @@
 <head>
 <title>BBnT's Fueled Up Webjam</title>
 <script src="/js/d3/d3.js" charset="utf-8"></script>
+<style>
+	div.bar {
+	    display: inline-block;
+	    width: 20px;
+	    height: 75px;   /* We'll override this later */
+	    background-color: teal;
+	    margin-right: 2px;
+	}
+</style>
 </head>
 <body>
 	<div id="div1">
@@ -13,6 +22,18 @@
 
 	<!------------------------ D3 Scripts ------------------ -->
 	<script>
+
+		var dataset = [ 5, 10, 15, 20, 25 ];
+
+		d3.select("body").selectAll("div")
+		    .data(dataset)
+		    .enter()
+		    .append("div")
+		    .attr("class", "bar")
+		    .style("height", function(d) {
+		    	return d*5 + "px";
+		    });
+		/**
 		d3.selectAll("p").style("color", function() {
   			return "hsl(" + Math.random() * 360 + ",100%,50%)";
 		});
@@ -25,6 +46,20 @@
     			.data([4, 8, 15, 16, 23, 42])
   				.enter().append("p")
     			.text(function(d) { return "I’m number " + d + "!"; });
+
+    	// Update…
+		var p = d3.select("body").selectAll("p")
+		    .data([4, 8, 15, 16, 23, 42])
+		    .text(String);
+
+		// Enter…
+		p.enter().append("p")
+		    .text(String);
+
+		// Exit…
+		p.exit().remove();
+		**/
+
 	</script>
 </body>
 </html>
