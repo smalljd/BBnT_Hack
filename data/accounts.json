@@ -1,0 +1,18 @@
+[
+    {
+        "_id": "54dc263b1a0bb10c0025e036", 
+        "accountType": "checking", 
+        "currentBalance": "5182.96", 
+        "isOpen": true, 
+        "openDate": "1970-06-05T07:33:03.023Z", 
+        "userId": "54dc263b1a0bb10c0025e035"
+    }, 
+    {
+        "_id": "54dc263b1a0bb10c0025e037", 
+        "accountType": "credit", 
+        "currentBalance": "7221.25", 
+        "isOpen": true, 
+        "openDate": "2013-08-31T02:19:33.587Z", 
+        "userId": "54dc263b1a0bb10c0025e035"
+    }
+]
