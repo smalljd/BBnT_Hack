@@ -45,10 +45,8 @@ var dataForTransaction = function (transaction) {
 }
 
 var margin = {top: 20, right: 20, bottom: 30, left: 40},
-    width = 960 - margin.left - margin.right,
-    height = 500 - margin.top - margin.bottom;
-
-console.log("Size: " + width + " " + height);
+    width = 1280 - margin.left - margin.right,
+    height = 700 - margin.top - margin.bottom;
 
 var axisStartDate = new Date("2010-1-1");
 var axisEndDate = new Date("2015-3-1");
@@ -75,7 +73,36 @@ var svg = d3.select("body").append("svg")
     .attr("height", height + margin.top + margin.bottom)
   .append("g")
     .attr("transform", "translate(" + margin.left + "," + margin.top + ")");
-  
+
+// Color palette
+var palette = [
+	d3.rgb(255,102,51),
+	d3.rgb(255,204,0),
+	d3.rgb(51,102,153),
+	d3.rgb(255,51,102),
+	d3.rgb(189,195,52)
+]
+
+// Rollup circles
+for (var i=0; i<palette.length; i++) {
+var line = svg.append("line")
+					.attr("x1", 10)
+					.attr("x2", 1000)
+					.attr("y1", 30 + 80 * i)
+					.attr("y2", 30 + 80 * i)
+					.attr("stroke", palette[i])
+					.attr("stroke-width", 10)
+
+var circle = svg.append("circle")
+					  .attr("id", "rollup")
+                      .attr("cx", 1000)
+                      .attr("cy", 30 + 80 * i)
+                      .attr("r", 20)
+                      .attr("stroke", "black")
+                      .attr("fill", palette[i]);
+}
+
+
   var foo = null;
   var categoryMap = {}
 
@@ -105,7 +132,7 @@ var svg = d3.select("body").append("svg")
 
     	d.radius = Math.max(8.0, parseFloat(d.amount)/20.0);
         d.purchaseDate = new Date(d.date);
-    	d.height = 50.0 * (6 - i % 6 + 1);
+    	d.height = 700 - 40.0 * (6 - i % 6 + 1);
 
     	foo = d;
     });
@@ -121,7 +148,7 @@ var svg = d3.select("body").append("svg")
       .attr("x", width)
       .attr("y", -6)
       .style("text-anchor", "end")
-      .text("Sepal Width (cm)");
+      .text("Purchases");
 
   svg.append("g")
       .attr("class", "y axis")
@@ -132,7 +159,7 @@ var svg = d3.select("body").append("svg")
       .attr("y", 6)
       .attr("dy", ".71em")
       .style("text-anchor", "end")
-      .text("Sepal Length (cm)")
+      .text("Y")
 
   console.log("yo");
   svg.selectAll(".dot")
@@ -149,6 +176,7 @@ var svg = d3.select("body").append("svg")
       .attr("cy", function(d) { return y(d.height); })
       .attr("id", function(d) { return 's' + d._id; })
       .style("fill", function(d) { return d3.rgb(224, 224, 224); })
+      // .style("stroke", 'red')
       .on('mouseover', function(d) {
       	info = dataForTransaction(d);
         if (info.category) {
@@ -157,13 +185,14 @@ var svg = d3.select("body").append("svg")
         	otherObjs.forEach(function (d2) {
         		var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
         		console.log(blah)
-        		blah.transition().duration(500).attr('stroke-width', 5).attr('stroke', d3.rgb(255, 0, 0))
+        		blah.transition().duration(500).attr('stroke-width', 3)
         	})
         }
+        d3.select(this).style("stroke", "red")
         d3.select(this)
           .transition()
           .duration(500)
-          .attr('stroke-width', 3)
+          .attr('stroke-width', 5)
       })
       .on('mouseout', function (d) {
       	info = dataForTransaction(d);
@@ -180,7 +209,31 @@ var svg = d3.select("body").append("svg")
           .transition()
           .duration(500)
           .attr('stroke-width', 1)
+          .style("stroke", "black")
       })
+      .on('click', function (d) {
+         console.log('click')
+         console.log(d)
+         d3.select(this)
+         .transition()
+         .duration(500)
+         .attr('cy', 0);
+     });
+
+// //Make an SVG Container
+// var svgContainer = d3.select("body").append("svg")
+//                                     .attr("width", 200)
+//                                     .attr("height", 200);
+
+// //Draw the line
+// var circle = svgContainer.append("line")
+//                          .attr("x1", 5)
+//                          .attr("y1", 5)
+//                          .attr("x2", 50)
+//                          .attr("y2", 50)
+//                          .attr("stroke-width", 2)
+//                          .attr("stroke", "black");
+//       })
 
   var legend = svg.selectAll(".legend")
       .data(color.domain())
