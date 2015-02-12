@@ -1,0 +1,14 @@
+<table border=1>
+<th>Transaction State</th>
+<th>Date</th>
+<th>Amount</th>
+<th>Merchant</th>
+<% for(var i=0; i<transactions.length; i++) { %>
+<tr>
+<td><%= transactions[i].state %></td>
+<td><%= transactions[i].date %></td>
+<td>$<%= transactions[i].amount %></td>
+<td><%= transactions[i].merchant %></td>
+</tr>
+<% } %>
+</table>

@@ -79,6 +79,25 @@ app.get('/user/:id', function(req, res, next){
                 })
         });
 
+app.get('/account/:id', function(req, res, next){
+        var transactionsURL = "http://fuelhackathon.herokuapp.com/transactions/" + req.params.id;
+        console.log("transactionsURL = " + transactionsURL);
+        request({
+                url: transactionsURL,
+                json: true
+                },
+                function (error, response, transactions) {
+                if (!error && response.statusCode === 200) {
+                
+                console.log(transactions) // Print the json response
+                res.render('account.ejs',{title:"Transactions",transactions:transactions});
+                }
+                else
+                res.render('error.ejs');
+                
+                })
+        });
+
 app.listen(3000);
 console.log('app is listening at localhost:3000');
 

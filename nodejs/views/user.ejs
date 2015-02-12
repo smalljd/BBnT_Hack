@@ -5,7 +5,7 @@
     <th>Still Open?</th>
 <% for(var i=0; i<accounts.length; i++) { %>
     <tr>
-    <td><a href='account/<%= accounts[i].id %>/'>
+    <td><a href='../account/<%= accounts[i]._id %>/'>
     <%= accounts[i].accountType %>
     </a></td>
     <td>$<%= accounts[i].currentBalance %></td>
