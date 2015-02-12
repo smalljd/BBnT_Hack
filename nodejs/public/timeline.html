@@ -83,20 +83,28 @@ var palette = [
 	d3.rgb(189,195,52)
 ]
 
+// Category info
+var numCategories = palette.length;
+var nextCategoryForClick = 0;
+
+var heightForCategory = function (catNum) {
+	return 30 + 80 * catNum;
+}
 // Rollup circles
 for (var i=0; i<palette.length; i++) {
+var h = heightForCategory(i);
 var line = svg.append("line")
 					.attr("x1", 10)
 					.attr("x2", 1000)
-					.attr("y1", 30 + 80 * i)
-					.attr("y2", 30 + 80 * i)
+					.attr("y1", h)
+					.attr("y2", h)
 					.attr("stroke", palette[i])
 					.attr("stroke-width", 10)
 
 var circle = svg.append("circle")
 					  .attr("id", "rollup")
                       .attr("cx", 1000)
-                      .attr("cy", 30 + 80 * i)
+                      .attr("cy", h)
                       .attr("r", 20)
                       .attr("stroke", "black")
                       .attr("fill", palette[i]);
@@ -107,20 +115,15 @@ var circle = svg.append("circle")
   var categoryMap = {}
 
   d3.json("transactions.json", function(data) {
-    console.log("Read transactions");
     var i = 1
 
     data.forEach(function (d) {
 	    var info = dataForTransaction(d);
-	    console.log(info);
 
         // Group with other transactions of the same category
         var category = info.category
         if (category) {
-        	console.log(categoryMap);
         	if (category in categoryMap) {
-        		console.log('Map:')
-        		console.log(categoryMap[category])
 				categoryMap[category].push(d);
         	} else {
 		        categoryMap[category] = [d];
@@ -132,7 +135,7 @@ var circle = svg.append("circle")
 
     	d.radius = Math.max(8.0, parseFloat(d.amount)/20.0);
         d.purchaseDate = new Date(d.date);
-    	d.height = 700 - 40.0 * (6 - i % 6 + 1);
+    	d.height = 350 + 30.0 * (6 - i % 6 + 1);
 
     	foo = d;
     });
@@ -161,33 +164,32 @@ var circle = svg.append("circle")
       .style("text-anchor", "end")
       .text("Y")
 
-  console.log("yo");
+var doStuffToRelatedTransactions = function (t, stuffCB) {
+	var info = dataForTransaction(t);
+    if (info.category) {
+    	otherObjs = categoryMap[info.category];
+    	otherObjs.forEach(stuffCB);
+    }
+}
+
+
   svg.selectAll(".dot")
       .data(data)
     .enter().append("circle")
       .attr("class", "dot")
       .attr("r", function(d) { return d.radius; })
       .attr("cx", function(d) { 
-      	console.log(d.purchaseDate);
-      	console.log(x);
         var foo = x(d.purchaseDate);
-        console.log(foo);
       	return foo; })
       .attr("cy", function(d) { return y(d.height); })
       .attr("id", function(d) { return 's' + d._id; })
       .style("fill", function(d) { return d3.rgb(224, 224, 224); })
       // .style("stroke", 'red')
       .on('mouseover', function(d) {
-      	info = dataForTransaction(d);
-        if (info.category) {
-        	otherObjs = categoryMap[info.category];
-    		console.log('Found:')
-        	otherObjs.forEach(function (d2) {
+      	doStuffToRelatedTransactions(d, function (d2) {
         		var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
-        		console.log(blah)
         		blah.transition().duration(500).attr('stroke-width', 3)
-        	})
-        }
+        	});
         d3.select(this).style("stroke", "red")
         d3.select(this)
           .transition()
@@ -195,16 +197,10 @@ var circle = svg.append("circle")
           .attr('stroke-width', 5)
       })
       .on('mouseout', function (d) {
-      	info = dataForTransaction(d);
-        if (info.category) {
-        	otherObjs = categoryMap[info.category];
-    		console.log('Found:')
-        	otherObjs.forEach(function (d2) {
+      	doStuffToRelatedTransactions(d, function (d2) {
         		var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
-        		console.log(blah)
         		blah.transition().duration(500).attr('stroke-width', 1)
-        	})
-        }
+        });
         d3.select(this)
           .transition()
           .duration(500)
@@ -212,12 +208,16 @@ var circle = svg.append("circle")
           .style("stroke", "black")
       })
       .on('click', function (d) {
-         console.log('click')
-         console.log(d)
-         d3.select(this)
-         .transition()
-         .duration(500)
-         .attr('cy', 0);
+      	var h = heightForCategory(nextCategoryForClick);
+        console.log("H is " + h)
+      	doStuffToRelatedTransactions(d, function (d2) {
+			var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
+			blah.transition()
+		         .duration(500)
+		         .attr('cy', h);
+      	});
+      	nextCategoryForClick += 1
+      	nextCategoryForClick = nextCategoryForClick % numCategories;
      });
 
 // //Make an SVG Container
