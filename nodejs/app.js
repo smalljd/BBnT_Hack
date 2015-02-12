@@ -59,6 +59,24 @@ app.get('/users', function(req, res){
                 })
         });
 
+app.get('/usersjson', function(req, res){
+        request({
+                url: url,
+                json: true
+                },
+                function (error, response, users) {
+                if (!error && response.statusCode === 200) {
+                
+                console.log(users) // Print the json response
+                res.render('usersjson.ejs',{title:"BB and T",users:users});
+                
+                }
+                else
+                res.render('error.ejs');
+                
+                })
+        });
+
 app.get('/user/:id', function(req, res, next){
         var accountsURL = "http://fuelhackathon.herokuapp.com/accounts/" + req.params.id;
         console.log("accountsURL = " + accountsURL);

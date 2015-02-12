@@ -1,10 +1,20 @@
 <table border=1>
+<th>Icon</th>
 <th>Transaction State</th>
 <th>Date</th>
 <th>Amount</th>
 <th>Merchant</th>
 <% for(var i=0; i<transactions.length; i++) { %>
 <tr>
+<td><img id="image<%= i %>" src=""></img></td>
+<script>
+var merchant = <%- transactions[i].merchant %>
+console.log("categoryPrefix = " + JSON.stringify(merchant.categories[0].icon.prefix));
+var prefix = JSON.stringify(merchant.categories[0].icon.prefix).substring(21);
+console.log("prefix = " + prefix);
+var imageurl = 'https://foursquare.com' + prefix.substring(0,prefix.length-1) + 'bg_88.png';
+document.getElementById("image<%= i %>").src = imageurl;
+</script>
 <td><%= transactions[i].state %></td>
 <td><%= transactions[i].date %></td>
 <td>$<%= transactions[i].amount %></td>
@@ -12,3 +22,15 @@
 </tr>
 <% } %>
 </table>
+
+
+<!-- https://foursquare.com/img/categories_v2/parks_outdoors/hikingtrail_bg_88.png
+    "prefix":"https://ss3.4sqi.net/img/categories_v2/parks_outdoors/hikingtrail_"
+<td><img src="https://foursquare.com/img/categories_v2/parks_outdoors/hikingtrail_bg_88.png"></img></td>
+
+http://localhost:3000/account/54dc26411a0bb10c0025e252/
+
+{"id":"4b896b9af964a520a13432e3","name":"Scotts Run Nature Preserve","contact":{},"location":{"address":"7400 Georgetown Pike","lat":38.95964744384811,"lng":-77.20385959654344,"distance":1199,"cc":"US","city":"McLean","state":"VA","country":"United States","formattedAddress":["7400 Georgetown Pike","McLean, VA","United States"]},"categories":[{"id":"4bf58dd8d48988d159941735","name":"Trail","pluralName":"Trails","shortName":"Trail","icon":{"prefix":"https://ss3.4sqi.net/img/categories_v2/parks_outdoors/hikingtrail_","suffix":".png"},"primary":true}],"verified":false,"stats":{"checkinsCount":869,"usersCount":476,"tipCount":7},"url":"http://www.fairfaxcounty.gov/parks/scottsrun/","specials":{"count":0,"items":[]},"hereNow":{"count":0,"summary":"Nobody here","groups":[]},"referralId":"v-1423713857"}
+
+
+-->
