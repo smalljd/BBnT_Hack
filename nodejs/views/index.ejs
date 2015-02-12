@@ -1,11 +1,112 @@
 <html>
 <head>
+<link rel="alternate" type="application/rss+xml" title="Capital One Design Library &raquo; Home Comments Feed" href="http://onedesign.kdc.capitalone.com/home/feed/"/>
+<link rel='stylesheet' id='docs-css' href='css/css1.css' type='text/css' media='all'/>
+<link rel='stylesheet' id='base-css' href='css/css2.css' type='text/css' media='all'/>
+<link rel='stylesheet' id='one-design-css' href='css/css3.css' type='text/css' media='all'/>
+<link rel='stylesheet' id='jetpack_css-css' href='css/css4.css' type='text/css' media='all'/>
+<style>
+body {
+font-family: Helvetica,
+sans-serif;
+color: #888888;
+margin: 0;
+background: white;
+}
+div.header {
+background: #004977;
+height: 88;
+margin: 0;
+}
+div.content {
+height: 60%;
+width: 100%;
+margin: 0;
+background-image: url('images/peopleBackground.png');
+opacity:0.4;
+}
+div.description {
+height: 98px;
+background: #ebeaec;
+}
+div.legalInfo {
+background: white;
+text-align: center;
+margin: 0;
+}
+
+div.login {
+border-radius: 5px;
+margin: 0 auto;
+color: #555;
+width: 300px;
+height: 250px;
+border: 2px solid #555;
+background: #efefef;
+text-align: center;
+}
+
+img#logo {
+height: 60px;
+width: auto;
+margin-left: 10%;
+margin-top: 15px;
+}
+footer {
+margin: 0;
+}
+</style>
 </head>
 <body>
-<h1><%= title %></h1>
-<form>
-Username:<input type="text"><br/>
-Password:<input type="password"><br/>
+
+<div id="header" class="header">
+<span id="logo">
+<img src="images/capitalOneLogo.png" id="logo">
+</span>
+</div>
+
+<div id="contentView" class="content">
+<br/><br/><br/>
+<div class="login">
+<br/><br/><br/>
+<form action="login" method="post">
+<label>Username:
+<input name="username" size="20" type="text" />
+</label>
+<br/>
+<label>Password:
+<input name="password" size="20" type="password" />
+</label>
+<div class="submit">
+<input type="submit" value="Sign in" />
+</div>
 </form>
+</div>
+</div>
+
+<div class="dss-home-latest">
+<div class="dss-home-latest_bd">
+<p class="dss-home-latest_ver">
+<span class="dss-home-release">
+<span class="dss-home-release_ver" title="Release 1">BBnT</span>
+<time class="dss-home-release_date" datetime="2015-2-3">February 3, 2015</time>
+</span>
+</p>
+<p class="dss-home-latest_detail" style="color: #555" id="userMessage">
+Hey, welcome to "My So Called Money", your personal finance
+assistant!
+<br/><br/>
+Click on any of the transactions above and place them in a
+category, then swipe the graph left to see where you're spending
+your money
+</p>
+</div>
+</div>
+
+<footer style="margin: 0; background: white">
+<div class="legalInfo" style="margin: 40px 0 40px">
+<p>2015 Capital&nbsp;One. All rights reserved. This site provides information and access to Capital&nbsp;One's Digital&nbsp;Hackathon&nbsp;Initiative.</p>
+</div>
+</footer>
 </body>
 </html>

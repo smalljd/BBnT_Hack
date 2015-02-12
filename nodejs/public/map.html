@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style type="text/css">
+            html, body, #map-canvas { height: 100%; margin: 0; padding: 0;}
+            </style>
+        <script type="text/javascript"
+            src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7iI_t7L1aWGtAIf_sqXHc6HEmQLWd4Hk">
+            </script>
+        <script type="text/javascript">
+            function initialize() {
+                var mapOptions = {
+                    center: { lat: 38.88, lng: -77.09},
+                    zoom: 13
+                };
+                var map = new google.maps.Map(document.getElementById('map-canvas'),
+                                              mapOptions);
+                var myLatlng = new google.maps.LatLng(38.88,-77.09);
+                var homeicon = "images/home.png";
+                var marker = new google.maps.Marker({
+                                                      position: myLatlng,
+                                                      map: map,
+                                                      animation: google.maps.Animation.DROP,
+                                                      title:"HOME",
+                                                      icon: homeicon
+                                                      });
+            }
+        google.maps.event.addDomListener(window, 'load', initialize);
+            </script>
+    </head>
+    <body>
+        <div id="map-canvas"></div>
+    </body>
+</html>

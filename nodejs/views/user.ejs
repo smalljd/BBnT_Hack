@@ -3,6 +3,7 @@
     <th>Balance</th>
     <th>Open Date</th>
     <th>Still Open?</th>
+    <th>Map View</th>
 <% for(var i=0; i<accounts.length; i++) { %>
     <tr>
     <td><a href='../account/<%= accounts[i]._id %>/'>
@@ -11,6 +12,9 @@
     <td>$<%= accounts[i].currentBalance %></td>
     <td><%= accounts[i].openDate %></td>
     <td><%= accounts[i].isOpen %></td>
+    <td><a href='../accountMap/<%= accounts[i]._id %>/'>
+    Transactions Map
+    </a></td>
     </tr>
     <% } %>
 </table>

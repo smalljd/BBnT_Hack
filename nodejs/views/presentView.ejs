@@ -1,0 +1,314 @@
+<html>
+<head>
+
+<link rel='stylesheet' id='docs-css' href='http://onedesign.kdc.capitalone.com/wp-content/themes/capital-one-design-system-theme/capitalone-design-system/components/css/A.docs.css,qver=4.0.pagespeed.cf.j2rf36ZmH3.css' type='text/css' media='all'/>
+<link rel='stylesheet' id='base-css' href='http://onedesign.kdc.capitalone.com/wp-content/themes/capital-one-design-system-theme/capitalone-design-system/components/css/A.base.css,qver=4.0.pagespeed.cf.McQ4DVUodx.css' type='text/css' media='all'/>
+<link rel='stylesheet' id='one-design-css' href='http://onedesign.kdc.capitalone.com/wp-content/themes/capital-one-design-system-theme/css/A.one-design.css,qver=4.0.pagespeed.cf.iwI3AkNPbP.css' type='text/css' media='all'/>
+<link rel='stylesheet' id='jetpack_css-css' href='http://onedesign.kdc.capitalone.com/wp-content/plugins/jetpack/css/A.jetpack.css,qver=3.3.pagespeed.cf.UprqhLiiqI.css' type='text/css' media='all'/>
+<style>
+.axis path,
+.axis line {
+fill: none;
+stroke: #000;
+shape-rendering: crispEdges;
+}
+
+.dot {
+stroke: #000;
+}
+
+body {
+font-family: Helvetica,
+sans-serif;
+color: #888888;
+margin: 0;
+background: white;
+}
+div.header {
+background: #004977;
+height: 88;
+margin: 0;
+}
+div.content {
+width: 100%;
+margin: 0;
+background: white;
+text-align: center;
+}
+
+div.legalInfo {
+background: white;
+text-align: center;
+margin: 0;
+}
+
+
+img#logo {
+height: 60px;
+width: auto;
+margin-left: 10%;
+margin-top: 15px;
+}
+footer {
+margin-top: 50px;
+}
+</style>
+<script type="text/javascript" src="js/d3/d3.min.js"></script>
+
+</head>
+<body>
+
+
+<div id="header" class="header">
+<span id="logo">
+<img src="images/capitalOneLogo.png" id="logo">
+</span>
+</div>
+
+<!------- This is where the account selection visualization happens ------ -->
+<div id="contentView" class="content">
+
+</div>
+
+<footer style="margin: 0; background: #efefef">
+<div class="legalInfo" style="margin: 40px 0 40px">
+<p>2015 Capital&nbsp;One. All rights reserved. This site provides information and access to Capital&nbsp;One's Digital&nbsp;Hackathon&nbsp;Initiative.</p>
+</div>
+</footer>
+
+
+<!-- Script goes here -->
+<script>
+
+var dataForTransaction = function (transaction) {
+merchant = JSON.parse(transaction.merchant);
+var merchantInfo = {
+
+'name': merchant.name,
+'amount': transaction.amount,
+'date': new Date(transaction.date),
+'category': '',
+'lat': merchant.location.lat,
+'lon': merchant.location.lng,
+}
+if (merchant.categories.length > 0) {
+merchantInfo.category = merchant.categories[0].name;  // short name?
+}
+return merchantInfo;
+}
+
+var margin = {top: 20, right: 20, bottom: 30, left: 40},
+width = 1280 - margin.left - margin.right,
+height = 700 - margin.top - margin.bottom;
+
+var axisStartDate = new Date("2010-1-1");
+var axisEndDate = new Date("2015-3-1");
+
+var x = d3.time.scale().domain([axisStartDate, axisEndDate]).range([0, width]);
+// var x = d3.scale.linear()
+//     .range([0, width]);
+
+var y = d3.scale.linear()
+// .range([height, 0]);
+
+var color = d3.scale.category10();
+
+var xAxis = d3.svg.axis()
+.scale(x)
+.orient("bottom");
+
+var yAxis = d3.svg.axis()
+.scale(y)
+.orient("left");
+
+var svg = d3.select("#contentView").append("svg")
+.attr("width", width + margin.left + margin.right)
+.attr("height", height + margin.top + margin.bottom)
+.append("g")
+.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+// Color palette
+var palette = [
+d3.rgb(255,102,51),
+d3.rgb(255,204,0),
+d3.rgb(51,102,153),
+d3.rgb(255,51,102),
+d3.rgb(189,195,52)
+]
+
+// Category info
+var numCategories = palette.length;
+var nextCategoryForClick = 0;
+
+var heightForCategory = function (catNum) {
+return 30 + 80 * catNum;
+}
+// Rollup circles
+for (var i=0; i<palette.length; i++) {
+var h = heightForCategory(i);
+var line = svg.append("line")
+.attr("x1", 10)
+.attr("x2", 1000)
+.attr("y1", h)
+.attr("y2", h)
+.attr("stroke", palette[i])
+.attr("stroke-width", 10)
+
+var circle = svg.append("circle")
+.attr("id", "rollup")
+.attr("cx", 1000)
+.attr("cy", h)
+.attr("r", 20)
+.attr("stroke", "black")
+.attr("fill", palette[i]);
+}
+
+
+var foo = null;
+var categoryMap = {}
+
+d3.json("transactions.json", function(data) {
+var i = 1
+
+data.forEach(function (d) {
+var info = dataForTransaction(d);
+
+// Group with other transactions of the same category
+var category = info.category
+if (category) {
+if (category in categoryMap) {
+categoryMap[category].push(d);
+} else {
+categoryMap[category] = [d];
+}
+}
+
+d.sepalWidth = i;
+i += 1;
+
+d.radius = Math.max(8.0, parseFloat(d.amount)/20.0);
+d.purchaseDate = new Date(d.date);
+d.height = 350 + 30.0 * (6 - i % 6 + 1);
+
+foo = d;
+});
+
+// Map
+
+svg.append("g")
+.attr("class", "x axis")
+.attr("transform", "translate(0," + height + ")")
+.call(xAxis)
+.append("text")
+.attr("class", "label")
+.attr("x", width)
+.attr("y", -6)
+.style("text-anchor", "end")
+.text("Purchases");
+
+svg.append("g")
+.attr("class", "y axis")
+.call(yAxis)
+.append("text")
+.attr("class", "label")
+.attr("transform", "rotate(-90)")
+.attr("y", 6)
+.attr("dy", ".71em")
+.style("text-anchor", "end")
+.text("Y")
+
+var doStuffToRelatedTransactions = function (t, stuffCB) {
+var info = dataForTransaction(t);
+if (info.category) {
+otherObjs = categoryMap[info.category];
+otherObjs.forEach(stuffCB);
+}
+}
+
+
+svg.selectAll(".dot")
+.data(data)
+.enter().append("circle")
+.attr("class", "dot")
+.attr("r", function(d) { return d.radius; })
+.attr("cx", function(d) {
+var foo = x(d.purchaseDate);
+return foo; })
+.attr("cy", function(d) { return y(d.height); })
+.attr("id", function(d) { return 's' + d._id; })
+.style("fill", function(d) { return d3.rgb(224, 224, 224); })
+// .style("stroke", 'red')
+.on('mouseover', function(d) {
+doStuffToRelatedTransactions(d, function (d2) {
+var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
+blah.transition().duration(500).attr('stroke-width', 3)
+});
+d3.select(this).style("stroke", "red")
+d3.select(this)
+.transition()
+.duration(500)
+.attr('stroke-width', 5)
+})
+.on('mouseout', function (d) {
+doStuffToRelatedTransactions(d, function (d2) {
+var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
+blah.transition().duration(500).attr('stroke-width', 1)
+});
+d3.select(this)
+.transition()
+.duration(500)
+.attr('stroke-width', 1)
+.style("stroke", "black")
+})
+.on('click', function (d) {
+var h = heightForCategory(nextCategoryForClick);
+console.log("H is " + h)
+doStuffToRelatedTransactions(d, function (d2) {
+var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
+blah.transition()
+.duration(500)
+.attr('cy', h);
+});
+nextCategoryForClick += 1
+nextCategoryForClick = nextCategoryForClick % numCategories;
+});
+
+// //Make an SVG Container
+// var svgContainer = d3.select("body").append("svg")
+//                                     .attr("width", 200)
+//                                     .attr("height", 200);
+
+// //Draw the line
+// var circle = svgContainer.append("line")
+//                          .attr("x1", 5)
+//                          .attr("y1", 5)
+//                          .attr("x2", 50)
+//                          .attr("y2", 50)
+//                          .attr("stroke-width", 2)
+//                          .attr("stroke", "black");
+//       })
+
+var legend = svg.selectAll(".legend")
+.data(color.domain())
+.enter().append("g")
+.attr("class", "legend")
+.attr("transform", function(d, i) { return "translate(0," + i * 20 + ")"; });
+
+legend.append("rect")
+.attr("x", width - 18)
+.attr("width", 18)
+.attr("height", 18)
+.style("fill", color);
+
+legend.append("text")
+.attr("x", width - 24)
+.attr("y", 9)
+.attr("dy", ".35em")
+.style("text-anchor", "end")
+.text(function(d) { return d; });
+
+});
+</script>
+
+</body>
+</html>
