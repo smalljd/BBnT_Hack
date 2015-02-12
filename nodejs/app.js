@@ -60,7 +60,7 @@ app.get('/users', function(req, res){
         });
 
 app.get('/user/:id', function(req, res, next){
-        var accountsURL = "http://fuelhackathon.herokuapp.com/accounts/" + req.parms.id;
+        var accountsURL = "http://fuelhackathon.herokuapp.com/accounts/" + req.params.id;
         console.log("accountsURL = " + accountsURL);
         request({
                 url: accountsURL,

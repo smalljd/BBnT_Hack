@@ -1,0 +1,16 @@
+<table border=1>
+    <th>Account Type</th>
+    <th>Balance</th>
+    <th>Open Date</th>
+    <th>Still Open?</th>
+<% for(var i=0; i<accounts.length; i++) { %>
+    <tr>
+    <td><a href='account/<%= accounts[i].id %>/'>
+    <%= accounts[i].accountType %>
+    </a></td>
+    <td>$<%= accounts[i].currentBalance %></td>
+    <td><%= accounts[i].openDate %></td>
+    <td><%= accounts[i].isOpen %></td>
+    </tr>
+    <% } %>
+</table>
