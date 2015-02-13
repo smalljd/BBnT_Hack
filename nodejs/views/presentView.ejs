@@ -1,10 +1,10 @@
 <html>
 <head>
 
-<link rel='stylesheet' id='docs-css' href='http://onedesign.kdc.capitalone.com/wp-content/themes/capital-one-design-system-theme/capitalone-design-system/components/css/A.docs.css,qver=4.0.pagespeed.cf.j2rf36ZmH3.css' type='text/css' media='all'/>
-<link rel='stylesheet' id='base-css' href='http://onedesign.kdc.capitalone.com/wp-content/themes/capital-one-design-system-theme/capitalone-design-system/components/css/A.base.css,qver=4.0.pagespeed.cf.McQ4DVUodx.css' type='text/css' media='all'/>
-<link rel='stylesheet' id='one-design-css' href='http://onedesign.kdc.capitalone.com/wp-content/themes/capital-one-design-system-theme/css/A.one-design.css,qver=4.0.pagespeed.cf.iwI3AkNPbP.css' type='text/css' media='all'/>
-<link rel='stylesheet' id='jetpack_css-css' href='http://onedesign.kdc.capitalone.com/wp-content/plugins/jetpack/css/A.jetpack.css,qver=3.3.pagespeed.cf.UprqhLiiqI.css' type='text/css' media='all'/>
+<link rel='stylesheet' id='docs-css' href='css/css1.css' type='text/css' media='all'/>
+<link rel='stylesheet' id='base-css' href='css/css2.css' type='text/css' media='all'/>
+<link rel='stylesheet' id='one-design-css' href='css/css3.css' type='text/css' media='all'/>
+<link rel='stylesheet' id='jetpack_css-css' href='css/css4.css' type='text/css' media='all'/>
 <style>
 .axis path,
 .axis line {
@@ -63,6 +63,9 @@ margin-top: 50px;
 <span id="logo">
 <img src="images/capitalOneLogo.png" id="logo">
 </span>
+<span style="text-align: right; font-size: 20px; color: white; position: absolute; top: 10px; left: 400px; margin-right: 10px">
+Classify Transactions: <span id="merchant"></span>
+</span>
 </div>
 
 <!------- This is where the account selection visualization happens ------ -->
@@ -104,7 +107,7 @@ width = 1280 - margin.left - margin.right,
 height = 700 - margin.top - margin.bottom;
 
 var axisStartDate = new Date("2010-1-1");
-var axisEndDate = new Date("2015-3-1");
+var axisEndDate = new Date("2014-7-1");
 
 var x = d3.time.scale().domain([axisStartDate, axisEndDate]).range([0, width]);
 // var x = d3.scale.linear()
@@ -135,8 +138,11 @@ d3.rgb(255,102,51),
 d3.rgb(255,204,0),
 d3.rgb(51,102,153),
 d3.rgb(255,51,102),
-d3.rgb(189,195,52)
+d3.rgb(189,195,52),
+d3.rgb(164, 89, 180),
 ]
+
+var categoryTotals = [0, 0, 0, 0, 0, 0]
 
 // Category info
 var numCategories = palette.length;
@@ -163,6 +169,13 @@ var circle = svg.append("circle")
 .attr("r", 20)
 .attr("stroke", "black")
 .attr("fill", palette[i]);
+
+var text = svg.append("text")
+.attr("id", "label" + i)
+.attr("x", 950)
+.attr("y", h + 42)
+.attr("font-size", "28px")
+.text("$0")
 }
 
 
@@ -170,7 +183,7 @@ var foo = null;
 var categoryMap = {}
 
 d3.json("transactions.json", function(data) {
-var i = 1
+var counter = 1
 
 data.forEach(function (d) {
 var info = dataForTransaction(d);
@@ -185,12 +198,11 @@ categoryMap[category] = [d];
 }
 }
 
-d.sepalWidth = i;
-i += 1;
+counter += 1;
 
 d.radius = Math.max(8.0, parseFloat(d.amount)/20.0);
 d.purchaseDate = new Date(d.date);
-d.height = 350 + 30.0 * (6 - i % 6 + 1);
+d.height = 400 + 30.0 * (6 - counter % 6 + 1);
 
 foo = d;
 });
@@ -208,16 +220,6 @@ svg.append("g")
 .style("text-anchor", "end")
 .text("Purchases");
 
-svg.append("g")
-.attr("class", "y axis")
-.call(yAxis)
-.append("text")
-.attr("class", "label")
-.attr("transform", "rotate(-90)")
-.attr("y", 6)
-.attr("dy", ".71em")
-.style("text-anchor", "end")
-.text("Y")
 
 var doStuffToRelatedTransactions = function (t, stuffCB) {
 var info = dataForTransaction(t);
@@ -227,6 +229,32 @@ otherObjs.forEach(stuffCB);
 }
 }
 
+var menuOpen = false
+var dismissMenu = function () {
+menuOpen = false;
+d3.select("#menu").remove();
+}
+
+var categorizePurchases = function (purchase, categoryIdx) {
+console.log("Categorizing to " + categoryIdx)
+console.log(purchase);
+var h = heightForCategory(categoryIdx);
+doStuffToRelatedTransactions(purchase, function (d2) {
+console.log("Amount is ", d2.amount);
+categoryTotals[categoryIdx] += parseFloat(d2.amount);
+console.log(categoryTotals);
+var blah = d3.select('#s' + d2._id)
+console.log(blah)
+blah.transition()
+.duration(500)
+.attr('cy', h)
+.style('fill', palette[categoryIdx]);
+});
+
+d3.select("#label" + categoryIdx).html("$" + String(categoryTotals[categoryIdx]));
+}
+
+var menuIdx = 0;
 
 svg.selectAll(".dot")
 .data(data)
@@ -245,6 +273,10 @@ doStuffToRelatedTransactions(d, function (d2) {
 var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
 blah.transition().duration(500).attr('stroke-width', 3)
 });
+
+var tinfo = dataForTransaction(d);
+d3.select("#merchant").html(tinfo.name + " $" + tinfo.amount);
+
 d3.select(this).style("stroke", "red")
 d3.select(this)
 .transition()
@@ -252,6 +284,7 @@ d3.select(this)
 .attr('stroke-width', 5)
 })
 .on('mouseout', function (d) {
+// clearHighlighted(d)
 doStuffToRelatedTransactions(d, function (d2) {
 var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
 blah.transition().duration(500).attr('stroke-width', 1)
@@ -263,32 +296,49 @@ d3.select(this)
 .style("stroke", "black")
 })
 .on('click', function (d) {
-var h = heightForCategory(nextCategoryForClick);
-console.log("H is " + h)
-doStuffToRelatedTransactions(d, function (d2) {
-var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
-blah.transition()
-.duration(500)
-.attr('cy', h);
-});
-nextCategoryForClick += 1
-nextCategoryForClick = nextCategoryForClick % numCategories;
-});
+if (menuOpen) {
+// Close menu
+dismissMenu();
+} else {
+menuOpen = true;
+var cinfo = dataForTransaction(d);
 
-// //Make an SVG Container
-// var svgContainer = d3.select("body").append("svg")
-//                                     .attr("width", 200)
-//                                     .attr("height", 200);
+// Add a circle
+var nx = x(d.purchaseDate);
+var ny = y(d.height);
+var menuContainer = svg.append("g").attr("id", "menu")
+for (var i=0; i<numCategories; i++) {
+console.log(i)
+var circle = menuContainer.append("circle")
+.attr("id", "cat" + i)
+.attr("thing", d)
+.attr("category", i)
+.attr("cx", nx)
+.attr("cy", ny)
+.attr("r", 20)
+.attr("stroke", "black")
+.attr("fill", palette[i])
+.on('click', function (c) {
+dismissMenu();
+console.log(this);
+console.log("D:")
+console.log(d);
+var catIdx = this.id[3];
+console.log("cat idx is " + this.category)
+// Categorize
+console.log("Click on " + menuIdx);
+categorizePurchases(d, catIdx);
+});
+menuIdx++;
+var angle = i * 2.0 * Math.PI / numCategories;
+circle.transition().duration(500)
+.attr("cx", nx - Math.cos(angle) * 50)
+.attr("cy", ny - Math.sin(angle) * 50)
+;
 
-// //Draw the line
-// var circle = svgContainer.append("line")
-//                          .attr("x1", 5)
-//                          .attr("y1", 5)
-//                          .attr("x2", 50)
-//                          .attr("y2", 50)
-//                          .attr("stroke-width", 2)
-//                          .attr("stroke", "black");
-//       })
+}
+}
+});
 
 var legend = svg.selectAll(".legend")
 .data(color.domain())
