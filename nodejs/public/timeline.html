@@ -111,6 +111,13 @@ var circle = svg.append("circle")
                       .attr("r", 20)
                       .attr("stroke", "black")
                       .attr("fill", palette[i]);
+
+var text = svg.append("text")
+        .attr("id", "label" + i)
+        .attr("x", 950)
+        .attr("y", h + 42)
+        .attr("font-size", "28px")
+        .text("$0")
 }
 
 
@@ -195,6 +202,8 @@ var categorizePurchases = function (purchase, categoryIdx) {
 	         .attr('cy', h)
 	         .style('fill', palette[categoryIdx]);
    	});
+
+   	d3.select("#label" + categoryIdx).html("$" + String(categoryTotals[categoryIdx]));
 }
 
 var menuIdx = 0;
