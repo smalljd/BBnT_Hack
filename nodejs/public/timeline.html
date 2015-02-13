@@ -24,7 +24,7 @@ body {
 <script type="text/javascript" src="/d3/d3.min.js"></script>
 </head>
 <body>
-<h1>Visualization</h1>
+<h1>Classify Transactions<div id="merchant"></div></h1>
 <script>
 
 var dataForTransaction = function (transaction) {
@@ -83,6 +83,8 @@ var palette = [
 	d3.rgb(189,195,52),
 	d3.rgb(164, 89, 180),
 ]
+
+var categoryTotals = [0, 0, 0, 0, 0, 0]
 
 // Category info
 var numCategories = palette.length;
@@ -183,11 +185,15 @@ var categorizePurchases = function (purchase, categoryIdx) {
 	console.log(purchase);
    	var h = heightForCategory(categoryIdx);
    	doStuffToRelatedTransactions(purchase, function (d2) {
+   		console.log("Amount is ", d2.amount);
+   		categoryTotals[categoryIdx] += parseFloat(d2.amount);
+   		console.log(categoryTotals);
 		var blah = d3.select('#s' + d2._id)
 		console.log(blah)
 		blah.transition()
 	         .duration(500)
-	         .attr('cy', h);
+	         .attr('cy', h)
+	         .style('fill', palette[categoryIdx]);
    	});
 }
 
@@ -269,19 +275,6 @@ var menuIdx = 0;
 
 			}
 		}
-
-
-
-   //    	var h = heightForCategory(nextCategoryForClick);
-   //      console.log("H is " + h)
-   //    	doStuffToRelatedTransactions(d, function (d2) {
-			// var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
-			// blah.transition()
-		 //         .duration(500)
-		 //         .attr('cy', h);
-   //    	});
-   //    	nextCategoryForClick += 1
-   //    	nextCategoryForClick = nextCategoryForClick % numCategories;
      });
 
   var legend = svg.selectAll(".legend")
