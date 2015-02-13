@@ -24,7 +24,7 @@ body {
 <script type="text/javascript" src="/d3/d3.min.js"></script>
 </head>
 <body>
-<h1>Classify Transactions<div id="merchant"></div></h1>
+<h1>Classify Transactions:<div id="merchant">abc</div></h1>
 <script>
 
 var dataForTransaction = function (transaction) {
@@ -49,7 +49,7 @@ var margin = {top: 20, right: 20, bottom: 30, left: 40},
     height = 700 - margin.top - margin.bottom;
 
 var axisStartDate = new Date("2010-1-1");
-var axisEndDate = new Date("2015-3-1");
+var axisEndDate = new Date("2014-7-1");
 
 var x = d3.time.scale().domain([axisStartDate, axisEndDate]).range([0, width]);
 // var x = d3.scale.linear()
@@ -216,6 +216,10 @@ var menuIdx = 0;
         		var blah = d3.select('#s' + d2._id) // .attr('stroke-width', 5);
         		blah.transition().duration(500).attr('stroke-width', 3)
         	});
+
+      	var tinfo = dataForTransaction(d);
+      	d3.select("#merchant").html(tinfo.name + " $" + tinfo.amount);
+
         d3.select(this).style("stroke", "red")
         d3.select(this)
           .transition()
@@ -240,6 +244,8 @@ var menuIdx = 0;
       		dismissMenu();
       	} else {
       		menuOpen = true;
+      		var cinfo = dataForTransaction(d);
+
 	      	// Add a circle
 			var nx = x(d.purchaseDate);
 			var ny = y(d.height);
